@@ -8,11 +8,15 @@ class RolesController extends Controller
 {
   public function index()
   {
-    $roles = roles::all();
+    $roles = Roles::all();
     return Response::json($roles);
   }
 
-  public function
+  public function store (Request $request)
   {
-    
+    $rules=[
+      "username" => "required",
+      "email" => "required",
+      "password" => "required"
+    ];
   }
