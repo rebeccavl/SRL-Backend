@@ -12,7 +12,7 @@ use Auth;
 
 class CatController extends Controller
 {
-  public functon __construct()
+  public function __construct()
   {
     $this->middleware('jwt.auth', ['only'=>['store','update','destroy']]);
   }
@@ -36,13 +36,14 @@ class CatController extends Controller
     {
       return Response::json(["error" => "Please fill out all fields."]);
     }
-    user = Auth::user();
+
+    $user = Auth::user();
     if($user->roleID != 1)
     {
       return Response::json(["error" => "You can't enter here."]);
     }
 
-    $category = new category;
+    $category = new Category;
 
     $category->category = $request->input('category');
     $category->description = $request->input('description');
