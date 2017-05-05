@@ -3,14 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Article;
+use Response;
+use Illuminate\Support\Facades\Validator;
+use Purifier;
+use JWTAuth;
+use Auth;
 
 class UsersController extends Controller
 {
 
   public function index()
   {
-    return File::get('index.html');
+    $user = User::all();
+    
+    return Response::json($user);
   }
+
 
   public function SignUp(Request $request)
   {
