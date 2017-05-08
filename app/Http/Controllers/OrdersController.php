@@ -21,12 +21,11 @@ class OrdersController extends Controller
   }
 
 
-  public function Order(Request $request)
+  public function store(Request $request)
   {
     $rules=[
       "productID" => "required",
       "quantity" => "required",
-      "comments" => "required"
     ];
     $validator = Validator::make(Purifier::clean($request->all()),$rules);
     if($validator->fails())
@@ -39,6 +38,7 @@ class OrdersController extends Controller
     $order->productID = $request->input("productID");
     $order->quantity = $request->input("quantity");
     $order->comments = $request->input("comments");
+    $order->totalPrice = $request->input("totalPrice");
     $order->save();
 
     return Response::json(["success"=>"You're order is complete."]);
