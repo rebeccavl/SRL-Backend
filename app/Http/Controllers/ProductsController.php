@@ -58,6 +58,7 @@ public function store(Request $request)
   return Response::json(["success" => "Product successfully added."]);
   }
 
+
   public function update($id, Request $request)
   {
     $products = Product::find($id);
@@ -73,8 +74,16 @@ public function store(Request $request)
 
     $products->save();
 
+    $validator = Validator::make(Purifier::clean($request->all()), $rules);
+
+    if($validator->fails())
+    {
+      return Response::json(["error"=>"please fill out all fields"]);
+    }
+
     return Response::json(["success"=>"Product Updated."]);
     }
+
 
     public function show($id)
     {

@@ -50,6 +50,13 @@ class RolesController extends Controller
     $role->title = $request->input('role');
     $role->save();
     return Response::json(["success"=>"Role Updated."]);
+
+    $validator = Validator::make(Purifier::clean($request->all()), $rules);
+
+    if($validator->fails())
+    {
+      return Response::json(["error"=>"please fill out all fields"]);
+    }
   }
 
 

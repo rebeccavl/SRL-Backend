@@ -73,6 +73,13 @@ class CatController extends Controller
 
     $category->save();
 
+    $validator = Validator::make(Purifier::clean($request->all()), $rules);
+
+    if($validator->fails())
+    {
+      return Response::json(["error"=>"please fill out all fields"]);
+    }
+    
     return Response::json(["success"=>"Category Updated."]);
   }
 
