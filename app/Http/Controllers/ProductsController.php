@@ -20,9 +20,12 @@ class ProductsController extends Controller
 public function store(Request $request)
 
   $rules = [
-    'title' => 'required',
+    'name' => 'required',
     'description' => 'required',
-    'image' => 'required'
+    'image' => 'required',
+    'price' => 'required',
+    'quantity' => 'required',
+    'availability' => 'required'
     ];
 
   $validator = Validator::make(Purifier::clean($request->all()), $rules);
@@ -40,8 +43,11 @@ public function store(Request $request)
 
   $products = new Product;
 
-  $products->title = $request->input('title');
+  $products->name = $request->input('name');
   $products->description = $request->input('description');
+  $products->price = $request->input('price');
+  $products->quantity = $request->input('quantity');
+  $products->availability = $request->('availability');
 
   $image = $request->file('image');
   $imageName= $image->getClientOriginalName();
