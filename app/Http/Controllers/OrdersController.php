@@ -33,12 +33,22 @@ class OrdersController extends Controller
       return Response::json(["error"=>"please fill out all fields"]);
     }
 
+    $product= Product::find($request->input('productID'));
+    if(empty($product))
+    {
+      return Response::json(["error"=>"No product found in skew."]);
+    }
+    if($product->availability==0)
+    {
+      return Response::json(["error"=>"Product is temporarily unavailable"]);
+    }
+
     $order = new Order;
     $order->userID = Auth::user()->id;
     $order->productID = $request->input("productID");
     $order->quantity = $request->input("quantity");
     $order->comments = $request->input("comments");
-    $order->totalPrice = $request->input("totalPrice");
+    $order->totalPrice=$request->input("amount")*$product->price;
     $order->save();
 
     return Response::json(["success"=>"You're order is complete."]);

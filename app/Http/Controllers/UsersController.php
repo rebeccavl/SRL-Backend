@@ -10,6 +10,7 @@ use Purifier;
 use JWTAuth;
 use Auth;
 
+
 class UsersController extends Controller
 {
 
