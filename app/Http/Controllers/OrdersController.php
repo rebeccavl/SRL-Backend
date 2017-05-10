@@ -7,13 +7,19 @@ use Illuminate\Support\Facades\Validator;
 use Purifier;
 use Hash;
 use JWTAuth;
-use App\User;
+use App\Order;
+use App\Product;
 use Response;
 use File;
 use Auth;
 
 class OrdersController extends Controller
 {
+  public function __construct()
+    {
+      $this->middleware('jwt.auth',['only'=>['store','show','update','destroy']]);
+    }
+
   public function index()
   {
     $order = Order::all();
@@ -24,31 +30,39 @@ class OrdersController extends Controller
   public function store(Request $request)
   {
     $rules=[
-      "productID" => "required",
+      "userID" => "required",
+      "productsID" => "required",
       "quantity" => "required",
+      "totalPrice" => "required",
+      "availability" => "required"
     ];
+
     $validator = Validator::make(Purifier::clean($request->all()),$rules);
     if($validator->fails())
     {
-      return Response::json(["error"=>"please fill out all fields"]);
+      return Response::json(["error" => "please fill out all fields"]);
     }
 
-    $product= Product::find($request->input('productID'));
-    if(empty($product))
+
+    $products = Product::find($request->input('productsID'));
+
+    if(empty($products))
     {
-      return Response::json(["error"=>"No product found in skew."]);
+      return Response::json(["error" => "Product not found."]);
     }
-    if($product->availability==0)
+
+    if($products->availability==0)
     {
       return Response::json(["error"=>"Product is temporarily unavailable"]);
     }
 
+
     $order = new Order;
     $order->userID = Auth::user()->id;
-    $order->productID = $request->input("productID");
+    $order->productsID = $request->input("productsID");
     $order->quantity = $request->input("quantity");
-    $order->comments = $request->input("comments");
-    $order->totalPrice=$request->input("amount")*$product->price;
+    $order->totalPrice=$request->input("amount")*$products->price;
+    $order->comments=$request->input("comments");
     $order->save();
 
     return Response::json(["success"=>"You're order is complete."]);
@@ -58,7 +72,8 @@ class OrdersController extends Controller
   public function show($id)
   {
     $order = Order::find($id);
-    return Response::json($Order);
+
+    return Response::json($order);
   }
 
 
@@ -67,5 +82,7 @@ class OrdersController extends Controller
   {
     $order = Order::find($id);
     $order->delete();
+
+    return Response::json(['success' => 'Order Cancelled.']);
   }
 }

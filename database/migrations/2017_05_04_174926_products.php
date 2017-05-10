@@ -22,6 +22,7 @@ class Products extends Migration
         $table->string('name');
         $table->integer('categoryID');
         $table->boolean('availability');
+        $table->integer('productsID');
         $table->timestamps();
         });
     }

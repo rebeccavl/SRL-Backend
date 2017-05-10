@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Article;
+use App\Product;
 use Response;
 use Illuminate\Support\Facades\Validator;
 use Purifier;
@@ -18,8 +18,8 @@ class ProductsController extends Controller
     return Response::json($products);
     }
 public function store(Request $request)
-
-  $rules = [
+{
+  $rules=[
     'name' => 'required',
     'description' => 'required',
     'image' => 'required',
@@ -35,19 +35,15 @@ public function store(Request $request)
     return Response::json(["error" => "Please fill out all fields."]);
     }
 
-  $user = Auth::user();
-  if($user->roleID != 1)
-    {
-    return Response::json(["error" => "You are not authorized to add a product."]);
-    }
-
   $products = new Product;
 
   $products->name = $request->input('name');
   $products->description = $request->input('description');
+  $products->categoryID = $request->input('categoryID');
   $products->price = $request->input('price');
   $products->quantity = $request->input('quantity');
-  $products->availability = $request->('availability');
+  $products->availability = $request->input('availability');
+  $products->productsID = $request->input('productsID');
 
   $image = $request->file('image');
   $imageName= $image->getClientOriginalName();
@@ -61,29 +57,40 @@ public function store(Request $request)
 
   public function update($id, Request $request)
   {
-    $products = Product::find($id);
-
-    $products->title = $request->input('title');
-
-    $products->description = $request->input('description');
-
-    $image = $request->file('image');
-    $imageName = $image->getClientOriginalName();
-    $image->move("storage/",$imageName);
-    $products->image = $request->root(). "/storage/".$imageName;
-
-    $products->save();
+    $rules=[
+      'name' => 'required',
+      'description' => 'required',
+      'image' => 'required',
+      'price' => 'required',
+      'quantity' => 'required',
+      'availability' => 'required'
+      ];
 
     $validator = Validator::make(Purifier::clean($request->all()), $rules);
 
     if($validator->fails())
-    {
-      return Response::json(["error"=>"please fill out all fields"]);
-    }
+      {
+      return Response::json(["error" => "Please fill out all fields."]);
+      }
 
-    return Response::json(["success"=>"Product Updated."]);
-    }
+    $products = Product::find($id);
 
+    $products->name = $request->input('name');
+    $products->description = $request->input('description');
+    $products->categoryID = $request->input('categoryID');
+    $products->price = $request->input('price');
+    $products->quantity = $request->input('quantity');
+    $products->productsID = $request->input('productsID');
+    $products->availability = $request->input('availability');
+
+    $image = $request->file('image');
+    $imageName= $image->getClientOriginalName();
+    $image->move('storage/',$imageName);
+    $products->image = $request->root()."/storage/".$imageName;
+    $products->save();
+
+    return Response::json(["success" => "Product successfully updated."]);
+  }
 
     public function show($id)
     {

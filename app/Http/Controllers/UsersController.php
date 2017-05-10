@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Article;
+use App\User;
 use Response;
 use Illuminate\Support\Facades\Validator;
+use File;
 use Purifier;
 use JWTAuth;
 use Auth;
+use Hash;
 
 
 class UsersController extends Controller
