@@ -35,6 +35,13 @@ public function store(Request $request)
     return Response::json(["error" => "Please fill out all fields."]);
     }
 
+  $category = Category::find($request->input("categoryID"));
+  
+  if(empty($category))
+    {
+      return Response::json(["error" => "Category not found."]);
+    }
+
   $products = new Product;
 
   $products->name = $request->input('name');
@@ -43,7 +50,6 @@ public function store(Request $request)
   $products->price = $request->input('price');
   $products->quantity = $request->input('quantity');
   $products->availability = $request->input('availability');
-  $products->productsID = $request->input('productsID');
 
   $image = $request->file('image');
   $imageName= $image->getClientOriginalName();
@@ -63,15 +69,23 @@ public function store(Request $request)
       'image' => 'required',
       'price' => 'required',
       'quantity' => 'required',
-      'availability' => 'required'
+      'availability' => 'required',
+      'categoryID' => 'required',
       ];
 
     $validator = Validator::make(Purifier::clean($request->all()), $rules);
 
     if($validator->fails())
-      {
-      return Response::json(["error" => "Please fill out all fields."]);
-      }
+    {
+    return Response::json(["error" => "Please fill out all fields."]);
+    }
+
+    $category = Category::find($request->input("categoryID"));
+    if(empty($category))
+    {
+      return Response::json(["error" => "Category not found."]);
+    }
+
 
     $products = Product::find($id);
 
@@ -80,7 +94,6 @@ public function store(Request $request)
     $products->categoryID = $request->input('categoryID');
     $products->price = $request->input('price');
     $products->quantity = $request->input('quantity');
-    $products->productsID = $request->input('productsID');
     $products->availability = $request->input('availability');
 
     $image = $request->file('image');
@@ -88,6 +101,8 @@ public function store(Request $request)
     $image->move('storage/',$imageName);
     $products->image = $request->root()."/storage/".$imageName;
     $products->save();
+
+
 
     return Response::json(["success" => "Product successfully updated."]);
   }

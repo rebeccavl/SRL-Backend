@@ -40,7 +40,7 @@ class OrdersController extends Controller
     $validator = Validator::make(Purifier::clean($request->all()),$rules);
     if($validator->fails())
     {
-      return Response::json(["error" => "please fill out all fields"]);
+      return Response::json(["error" => "Please fill out all fields"]);
     }
 
 
@@ -81,6 +81,13 @@ class OrdersController extends Controller
   public function destroy($id)
   {
     $order = Order::find($id);
+
+    $user = Auth::user();
+
+    if($user->roleID !=1 || $user-id != $order->$userID)
+
+    return Response::json(["error"=>"You are not authorized to complete this action."]);
+
     $order->delete();
 
     return Response::json(['success' => 'Order Cancelled.']);

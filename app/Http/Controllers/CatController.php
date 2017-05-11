@@ -14,7 +14,7 @@ class CatController extends Controller
 {
   public function __construct()
   {
-    $this->middleware('jwt.auth', ['only'=>['store','update','destroy']]);
+    $this->middleware('jwt.auth', ['only'=>['store','update','show','destroy']]);
   }
 
   public function index()
@@ -26,8 +26,9 @@ class CatController extends Controller
   {
     $rules =[
       'category' => 'required',
-      'description' => 'required'
-      'image' => 'required'
+      'description' => 'required',
+      'image' => 'required',
+      'roleID'=> 'required',
     ];
 
     $validator = Validator::make(Purifier::clean($request->all()),$rules);
@@ -47,6 +48,7 @@ class CatController extends Controller
 
     $category->category = $request->input('category');
     $category->description = $request->input('description');
+    $category->roleID = $request->input('roleID');
 
     $image = $request->file('image');
     $imageName= $image->getClientOriginalName();
@@ -79,7 +81,7 @@ class CatController extends Controller
     {
       return Response::json(["error"=>"please fill out all fields"]);
     }
-    
+
     return Response::json(["success"=>"Category Updated."]);
   }
 

@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 
 
 
-
-Route::get('getRoles', 'RolesController@index');
+//Routes work
+Route::get('getRoles','RolesController@index');
 Route::post('storeRole','RolesController@store');
 Route::post('updateRole/{id}','RolesController@update');
 Route::get('showRole/{id}','RolesController@show');
@@ -14,7 +14,7 @@ Route::post('deleteRole/{id}','RolesController@destroy');
 Route::get('getUsers','CatController@index');
 Route::post('SignIn','UsersController@SignIn');
 Route::post('SignUp','UsersController@SignUp');
-
+//routes work
 Route::post('storeOrder','OrdersController@store');
 Route::get('showOrder/{id}','OrdersController@show');
 Route::post('deleteOrder/{id}','OrdersController@destroy');

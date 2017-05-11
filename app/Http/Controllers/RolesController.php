@@ -7,28 +7,32 @@ use Illuminate\Support\Facades\Validator;
 use Purifier;
 use Hash;
 use JWTAuth;
+use App\Role;
 use App\User;
 use Response;
 use File;
+use Auth;
 
 class RolesController extends Controller
 {
-
+  public function __construct()
+  {
+    $this->middleware('jwt.auth',['only'=>['index','store','update','destroy']]);
+  }
 
   public function index()
   {
-    $roles = Roles::all();
+    $roles = Role::all();
     return Response::json($roles);
   }
 
 
-  public function store (Request $request)
+  public function store(Request $request)
   {
     $rules=[
-      "username" => "required",
-      "email" => "required",
-      "password" => "required"
+      "role" => 'required',
     ];
+
   $validator = Validator::make(Purifier::clean($request->all()), $rules);
 
   if($validator->fails())
@@ -37,25 +41,34 @@ class RolesController extends Controller
   }
 
   $user = Auth::user();
-  if($user->roleID != 1)
+  if($user->roleID != 2)
   {
     return Response::json(["error" => "You can't enter here."]);
   }
+
+  $roles = new Role;
+
+  $roles->role = $request->input('role');
+  $roles->save();
+
+  return Response::json(["succes" => "Role successfully added."]);
+
 }
 
 
   public function update($id, Request $request)
   {
     $role = Role::find($id);
-    $role->title = $request->input('role');
+    $role->role = $request->input('role');
     $role->save();
     return Response::json(["success"=>"Role Updated."]);
+
 
     $validator = Validator::make(Purifier::clean($request->all()), $rules);
 
     if($validator->fails())
     {
-      return Response::json(["error"=>"please fill out all fields"]);
+      return Response::json(["error"=>"Please fill out all fields."]);
     }
   }
 
