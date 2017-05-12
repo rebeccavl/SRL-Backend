@@ -20,6 +20,7 @@ class CatController extends Controller
   public function index()
   {
     $category = Category::all();
+    return Response::json($category);
   }
 
   public function store(Request $request)
@@ -28,7 +29,6 @@ class CatController extends Controller
       'category' => 'required',
       'description' => 'required',
       'image' => 'required',
-      'roleID'=> 'required',
     ];
 
     $validator = Validator::make(Purifier::clean($request->all()),$rules);
@@ -67,7 +67,6 @@ class CatController extends Controller
       'category' => 'required',
       'description' => 'required',
       'image' => 'required',
-      'roleID'=> 'required',
     ];
 
     $validator = Validator::make(Purifier::clean($request->all()),$rules);
@@ -113,11 +112,14 @@ class CatController extends Controller
   {
     $user = Auth::user();
     if($user->roleID != 1)
-    
+
     $category = Category::find($id);
 
     $category->delete();
 
-    return Response::json(['success' => 'Category Deleted.']);
+    {
+      return Response::json(['success' => 'Category Deleted.']);
+    }
   }
+  
 }

@@ -14,6 +14,7 @@ Route::post('deleteRole/{id}','RolesController@destroy');
 Route::get('getUsers','CatController@index');
 Route::post('SignIn','UsersController@SignIn');
 Route::post('SignUp','UsersController@SignUp');
+Route::post('deleteUser/{id}','UsersController@destroy');
 //routes work
 Route::post('storeOrder','OrdersController@store');
 Route::get('showOrder/{id}','OrdersController@show');

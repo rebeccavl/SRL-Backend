@@ -96,6 +96,8 @@ class UsersController extends Controller
     return Response::json(compact("token"));
 
   }
+
+
   public function destroy($id)
   {
     $user = Auth::user();
@@ -108,7 +110,9 @@ class UsersController extends Controller
 
     $user->delete();
 
-    return Response::json(['success' => 'User Deleted.']);
+    {
+      return Response::json(['success' => 'User Deleted.']);
+    }
   }
 
 }

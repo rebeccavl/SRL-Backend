@@ -104,9 +104,12 @@ class RolesController extends Controller
     {
       return Response::json(["error" => "You can't enter here."]);
     }
-    
+
     $role = Role::find($id);
     $role->delete();
-    return Response::json(['success' => 'Role deleted.']);
+    {
+      return Response::json(['success' => 'Role deleted.']);
+    }
   }
+  
 }
