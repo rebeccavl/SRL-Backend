@@ -15,6 +15,10 @@ use Hash;
 
 class UsersController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('jwt.auth',['only'=>['destroy']]);
+  }
 
   public function index()
   {
@@ -31,6 +35,7 @@ class UsersController extends Controller
       "email" => "required",
       "password" => "required"
     ];
+
     $validator = Validator::make(Purifier::clean($request->all()), $rules);
 
     if($validator->fails())
@@ -91,4 +96,19 @@ class UsersController extends Controller
     return Response::json(compact("token"));
 
   }
+  public function destroy($id)
+  {
+    $user = Auth::user();
+    if($user->roleID != 1)
+    {
+      return Response::json(["error" => "You can't enter here."]);
+    }
+
+    $user = User::find($id);
+
+    $user->delete();
+
+    return Response::json(['success' => 'User Deleted.']);
+  }
+
 }
