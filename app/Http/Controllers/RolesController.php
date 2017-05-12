@@ -41,7 +41,7 @@ class RolesController extends Controller
   }
 
   $user = Auth::user();
-  if($user->roleID != 2)
+  if($user->roleID != 1)
   {
     return Response::json(["error" => "You can't enter here."]);
   }
@@ -58,6 +58,23 @@ class RolesController extends Controller
 
   public function update($id, Request $request)
   {
+    $rules=[
+      "role" => 'required',
+    ];
+
+  $validator = Validator::make(Purifier::clean($request->all()), $rules);
+
+  if($validator->fails())
+  {
+    return Response::json(["error"=>"please fill out all of the fields"]);
+  }
+
+  $user = Auth::user();
+  if($user->roleID != 1)
+  {
+    return Response::json(["error" => "You can't enter here."]);
+  }
+
     $role = Role::find($id);
     $role->role = $request->input('role');
     $role->save();
@@ -82,6 +99,12 @@ class RolesController extends Controller
 
   public function destroy($id)
   {
+    $user = Auth::user();
+    if($user->roleID != 1)
+    {
+      return Response::json(["error" => "You can't enter here."]);
+    }
+    
     $role = Role::find($id);
     $role->delete();
     return Response::json(['success' => 'Role deleted.']);
