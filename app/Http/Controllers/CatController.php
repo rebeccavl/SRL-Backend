@@ -63,6 +63,26 @@ class CatController extends Controller
 
   public function update($id, Request $request)
   {
+    $rules =[
+      'category' => 'required',
+      'description' => 'required',
+      'image' => 'required',
+      'roleID'=> 'required',
+    ];
+
+    $validator = Validator::make(Purifier::clean($request->all()),$rules);
+
+    if($validator->fails())
+    {
+      return Response::json(["error" => "Please fill out all fields."]);
+    }
+
+    $user = Auth::user();
+    if($user->roleID != 1)
+    {
+      return Response::json(["error" => "You can't enter here."]);
+    }
+
     $category = Category::find($id);
 
     $category->category = $request->input('category');
@@ -74,13 +94,6 @@ class CatController extends Controller
     $category->image = $request->root(). "/storage/".$imageName;
 
     $category->save();
-
-    $validator = Validator::make(Purifier::clean($request->all()), $rules);
-
-    if($validator->fails())
-    {
-      return Response::json(["error"=>"please fill out all fields"]);
-    }
 
     return Response::json(["success"=>"Category Updated."]);
   }
@@ -98,6 +111,9 @@ class CatController extends Controller
 
   public function destroy($id)
   {
+    $user = Auth::user();
+    if($user->roleID != 1)
+    
     $category = Category::find($id);
 
     $category->delete();
