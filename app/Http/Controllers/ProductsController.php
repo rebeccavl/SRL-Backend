@@ -12,11 +12,18 @@ use Auth;
 
 class ProductsController extends Controller
   {
+    public function __construct()
+      {
+        $this->middleware('jwt.auth',['only'=>['store','update','destroy']]);
+      }
+
     public function index()
+
     {
     $products = Product::all();
     return Response::json($products);
     }
+
 public function store(Request $request)
 {
   $rules=[
@@ -36,10 +43,16 @@ public function store(Request $request)
     }
 
   $category = Category::find($request->input("categoryID"));
-  
+
   if(empty($category))
     {
       return Response::json(["error" => "Category not found."]);
+    }
+
+    $user = Auth::user();
+    if($user->roleID != 1)
+    {
+      return Response::json(["error" => "You can't enter here."]);
     }
 
   $products = new Product;
@@ -86,6 +99,11 @@ public function store(Request $request)
       return Response::json(["error" => "Category not found."]);
     }
 
+    $user = Auth::user();
+    if($user->roleID != 1)
+    {
+      return Response::json(["error" => "You can't enter here."]);
+    }
 
     $products = Product::find($id);
 
@@ -117,6 +135,12 @@ public function store(Request $request)
 
     public function destroy($id)
     {
+      $user = Auth::user();
+      if($user->roleID != 1)
+      {
+        return Response::json(["error" => "You can't enter here."]);
+      }
+
       $products = Product::find($id);
 
       $products->delete();

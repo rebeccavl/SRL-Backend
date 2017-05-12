@@ -17,7 +17,7 @@ class OrdersController extends Controller
 {
   public function __construct()
     {
-      $this->middleware('jwt.auth',['only'=>['store','show','update','destroy']]);
+      $this->middleware('jwt.auth',['only'=>['store','update','destroy']]);
     }
 
   public function index()
@@ -58,6 +58,48 @@ class OrdersController extends Controller
 
 
     $order = new Order;
+    $order->userID = Auth::user()->id;
+    $order->productsID = $request->input("productsID");
+    $order->quantity = $request->input("quantity");
+    $order->totalPrice=$request->input("amount")*$products->price;
+    $order->comments=$request->input("comments");
+    $order->save();
+
+    return Response::json(["success"=>"You're order is complete."]);
+  }
+
+
+  public function update(Request $request)
+  {
+    $rules=[
+      "userID" => "required",
+      "productsID" => "required",
+      "quantity" => "required",
+      "totalPrice" => "required",
+      "availability" => "required"
+    ];
+
+    $validator = Validator::make(Purifier::clean($request->all()),$rules);
+    if($validator->fails())
+    {
+      return Response::json(["error" => "Please fill out all fields"]);
+    }
+
+
+    $products = Product::find($request->input('productsID'));
+
+    if(empty($products))
+    {
+      return Response::json(["error" => "Product not found."]);
+    }
+
+    if($products->availability==0)
+    {
+      return Response::json(["error"=>"Product is temporarily unavailable"]);
+    }
+
+
+    $order = Order::find($id);
     $order->userID = Auth::user()->id;
     $order->productsID = $request->input("productsID");
     $order->quantity = $request->input("quantity");
